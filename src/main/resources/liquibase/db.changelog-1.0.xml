@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd
+        ">
+    <changeSet id="1.0.0" author="alex.brailovsky">
+        <createTable tableName="users">
+            <column name="id" type="bigint" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false" unique="true"/>
+            </column>
+            <column name="name" type="varchar(50)">
+                <constraints nullable="false" unique="true"/>
+            </column>
+            <column name="age" type="int">
+                <constraints nullable="false"/>
+            </column>
+            <column name="password" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="1.0.1" author="alex.brailovsky">
+        <createTable tableName="houses">
+            <column name="id" type="bigint" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false" unique="true"/>
+            </column>
+            <column name="address" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="owner_id" type="bigint">
+                <constraints nullable="true"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="1.0.2" author="alex.brailovsky">
+        <createTable tableName="residents">
+            <column name="user_id" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+            <column name="house_id" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="1.0.3" author="alex.brailovsky">
+        <addForeignKeyConstraint baseTableName="residents"
+                                 baseColumnNames="user_id"
+                                 constraintName="residents_user_id_foreign_key"
+                                 referencedTableName="users"
+                                 referencedColumnNames="id"/>
+        <addForeignKeyConstraint baseTableName="residents"
+                                 baseColumnNames="house_id"
+                                 constraintName="residents_house_id_foreign_key"
+                                 referencedTableName="houses"
+                                 referencedColumnNames="id"/>
+
+    </changeSet>
+
+    <changeSet id="1.0.4" author="alex.brailovsky">
+        <addUniqueConstraint
+                columnNames="user_id, house_id"
+                constraintName="residents_user_id_house_id_key"
+                tableName="residents"
+        />
+    </changeSet>
+
+    <changeSet id="1.0.5" author="alex.brailovsky">
+        <createTable tableName="owner_houses">
+            <column name="user_id" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+            <column name="house_id" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="1.0.6" author="alex.brailovsky">
+        <addForeignKeyConstraint baseTableName="owner_houses"
+                                 baseColumnNames="user_id"
+                                 constraintName="owner_houses_user_id_foreign_key"
+                                 referencedTableName="users"
+                                 referencedColumnNames="id"/>
+        <addForeignKeyConstraint baseTableName="owner_houses"
+                                 baseColumnNames="house_id"
+                                 constraintName="owner_houses_house_id_foreign_key"
+                                 referencedTableName="houses"
+                                 referencedColumnNames="id"/>
+
+    </changeSet>
+
+    <changeSet id="1.0.7" author="alex.brailovsky">
+        <addUniqueConstraint
+                columnNames="house_id"
+                constraintName="owner_houses_house_id_key"
+                tableName="owner_houses"
+        />
+    </changeSet>
+
+</databaseChangeLog>
