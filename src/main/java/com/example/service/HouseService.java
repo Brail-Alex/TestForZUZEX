@@ -74,5 +74,27 @@ public class HouseService {
         return id;
     }
 
+    /**
+     * BUSINESS LOGIC
+     */
 
+    public String addResidentsAtHouse(User owner, User futureResident, String address){
+        List<House> ownerHouseList = owner.getHouseOwnerList();
+        House theHouse = (House) ownerHouseList.stream().filter(house -> house.getAddress().equals(address));
+
+        if (theHouse == null) {
+            return new EntityNotFoundException("House with this address from the owner not found.").getMessage();
+        }
+
+        List<User> residentList = theHouse.getResidents();
+        List<House> housesResidence = futureResident.getHousesResidence();
+
+        if(housesResidence.stream().filter(theHouse::equals).equals(theHouse)){
+            return new EntityAlreadyExistException("User already residence at this the house").getMessage();
+        }
+        housesResidence.add(theHouse);
+        residentList.add(futureResident);
+        return "Resident added in house at the address " + address ;
+
+    }
 }

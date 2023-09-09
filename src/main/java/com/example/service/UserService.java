@@ -73,11 +73,11 @@ public class UserService {
                     oldUser.setAge(user.getAge());
                     oldUser.setPassword(user.getPassword());
 
-                    if (user.getHouseId() != null) {
-                        oldUser.setHouseId(user.getHouseId());
+                    if (user.getHousesResidence() != null) {
+                        oldUser.setHousesResidence(user.getHousesResidence());
                     }
-                    if (user.getHouseList() != null) {
-                        oldUser.setHouseList(user.getHouseList());
+                    if (user.getHouseOwnerList() != null) {
+                        oldUser.setHouseOwnerList(user.getHouseOwnerList());
                     }
                     return userRepo.save(oldUser);
                 })

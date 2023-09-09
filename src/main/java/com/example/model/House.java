@@ -1,10 +1,7 @@
 package com.example.model;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.util.List;
 
@@ -14,6 +11,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "houses")
+@EqualsAndHashCode
 public class House {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -23,10 +21,11 @@ public class House {
     private String address;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "owner_id")
+    @JoinTable(name = "owner_houses", joinColumns = {@JoinColumn(name = "user_id", referencedColumnName = "id")},
+            inverseJoinColumns = {@JoinColumn(name = "house_id", referencedColumnName = "id")})
     private User ownerId;
 
 
-    @OneToMany(mappedBy = "houseId", cascade = CascadeType.ALL)
+    @ManyToMany(mappedBy = "housesResidence", cascade = CascadeType.ALL)
     private List<User> residents;
 }
