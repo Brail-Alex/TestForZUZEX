@@ -1,30 +1,41 @@
 package com.example.service;
 
+import com.example.dto.AuthRequestsDto;
+import com.example.exception.AuthorizationNotPass;
 import com.example.exception.EntityAlreadyExistException;
 import com.example.model.User;
 import com.example.repository.UserRepository;
+import com.example.security.jwt.JwtToken;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Objects;
 
 @Service
 @Slf4j
 public class UserService {
 
     private final UserRepository userRepo;
+    private final JwtToken jwtToken;
 
     @Autowired
-    public UserService(UserRepository userRepo) {
+    public UserService(UserRepository userRepo, JwtToken jwtToken) {
         this.userRepo = userRepo;
+        this.jwtToken = jwtToken;
     }
 
-    public String  createUser(User user) throws EntityAlreadyExistException {
-        User registeredUser = userRepo.save(user);
-        log.info("IN createUser - user: {} successfully registered", registeredUser);
-        return null;
+    public String createUser(User user) throws EntityAlreadyExistException {
+        if (getUserByName(user.getName()) == null) {
+            User registeredUser = userRepo.save(user);
+            log.info("IN createUser - user: {} successfully registered", registeredUser);
+            return jwtToken.createToken(user.getName());
+        } else {
+            log.info("IN createUser - user: {} with this name: {} already exist", user, user.getName());
+            throw new EntityAlreadyExistException("User with this name already exist");
+        }
     }
 
     public List<User> getAllUsers() {
@@ -43,16 +54,17 @@ public class UserService {
         return user;
     }
 
-    public User getUserByName(String name){
+    public User getUserByName(String name) {
         User user = userRepo.findByName(name);
-        if (user == null){
+        if (user == null) {
             log.info("IN getUserByName - no user found by name: {}", name);
             throw new EntityNotFoundException("User with this name not found.");
         }
 
-        log.info("IN getUserById - user: {} found by name: {}", user, name);
+        log.info("IN getUserByName - user: {} found by name: {}", user, name);
         return user;
     }
+
     public User updateUser(User user, Long id) throws EntityNotFoundException {
 
         return userRepo.findById(id)
@@ -61,10 +73,10 @@ public class UserService {
                     oldUser.setAge(user.getAge());
                     oldUser.setPassword(user.getPassword());
 
-                    if(user.getHouse() != null) {
-                        oldUser.setHouse(user.getHouse());
+                    if (user.getHouseId() != null) {
+                        oldUser.setHouseId(user.getHouseId());
                     }
-                    if (user.getHouseList() != null){
+                    if (user.getHouseList() != null) {
                         oldUser.setHouseList(user.getHouseList());
                     }
                     return userRepo.save(oldUser);
@@ -85,5 +97,20 @@ public class UserService {
         }
         return id;
     }
+
+    /**
+     * BUSINESS LOGIC
+     */
+
+    public String authorization(AuthRequestsDto auth) throws AuthorizationNotPass {
+        User user = getUserByName(auth.getName());
+        if (Objects.equals(user.getPassword(), auth.getPassword())) {
+            return jwtToken.createToken(user.getName());
+        } else {
+            throw new AuthorizationNotPass("Enter the correct username or password!");
+        }
+    }
+
+
 
 }

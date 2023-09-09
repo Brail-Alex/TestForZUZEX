@@ -31,7 +31,8 @@ public class User {
     private List<House> houseList;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "house_id")
-    private House house;
+    @JoinTable(name = "residents", joinColumns = {@JoinColumn(name = "user_id", referencedColumnName = "id")},
+            inverseJoinColumns = {@JoinColumn(name = "house_id", referencedColumnName = "id")})
+    private House houseId;
 
 }

@@ -27,6 +27,6 @@ public class House {
     private User ownerId;
 
 
-    @OneToMany(mappedBy = "house", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "houseId", cascade = CascadeType.ALL)
     private List<User> residents;
 }
