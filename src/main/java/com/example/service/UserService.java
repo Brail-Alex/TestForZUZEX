@@ -69,22 +69,44 @@ public class UserService {
 
         return userRepo.findById(id)
                 .map(oldUser -> {
-                    oldUser.setName(user.getName());
-                    oldUser.setAge(user.getAge());
-                    oldUser.setPassword(user.getPassword());
-
-                    if (user.getHousesResidence() != null) {
-                        oldUser.setHousesResidence(user.getHousesResidence());
-                    }
-                    if (user.getHouseOwnerList() != null) {
-                        oldUser.setHouseOwnerList(user.getHouseOwnerList());
-                    }
+//                    oldUser.setName(user.getName());
+//                    oldUser.setAge(user.getAge());
+//                    oldUser.setPassword(user.getPassword());
+//
+//                    if (user.getHousesResidence() != null) {
+//                        oldUser.setHousesResidence(user.getHousesResidence());
+//                    }
+//                    if (user.getHouseOwnerList() != null) {
+//                        oldUser.setHouseOwnerList(user.getHouseOwnerList());
+//                    }
                     return userRepo.save(oldUser);
                 })
                 .orElseThrow(() -> {
                     log.info("IN getUserById - no user found by id: {}", id);
                     return new EntityNotFoundException("User with this id not found.");
                 });
+    }
+
+    public User updateUser(User user) throws EntityNotFoundException {
+
+        User oldUser = userRepo.findById(user.getId()).orElseThrow();
+        oldUser.setName(user.getName());
+        oldUser.setAge(user.getAge());
+        oldUser.setPassword(user.getPassword());
+
+        if (user.getHousesResidence() != null) {
+            oldUser.setHousesResidence(user.getHousesResidence());
+        }
+        if (user.getHouseOwnerList() != null) {
+            oldUser.setHouseOwnerList(user.getHouseOwnerList());
+        }
+
+        return userRepo.save(oldUser);
+//                })
+//                .orElseThrow(() -> {
+//                    log.info("IN getUserById - no user found by id: {}", user.getId());
+//                    return new EntityNotFoundException("User with this id not found.");
+//                });
     }
 
     public Long deleteUserById(Long id) {
@@ -99,7 +121,7 @@ public class UserService {
     }
 
     /**
-     * BUSINESS LOGIC
+     * AUTHORIZATION
      */
 
     public String authorization(AuthRequestsDto auth) throws AuthorizationNotPass {
@@ -110,7 +132,6 @@ public class UserService {
             throw new AuthorizationNotPass("Enter the correct username or password!");
         }
     }
-
 
 
 }

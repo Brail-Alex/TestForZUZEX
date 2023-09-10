@@ -1,29 +1,30 @@
 package com.example.controller;
 
+import com.example.exception.EntityAlreadyExistException;
 import com.example.exception.JwtAuthenticationException;
-import com.example.model.User;
+import com.example.model.House;
 import com.example.security.jwt.JwtTokenCheck;
-import com.example.service.UserService;
+import com.example.service.HouseService;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/v1/user")
-public class UserController {
+@RequestMapping("/api/v1/houses")
+public class HouseController {
 
-    private final UserService userService;
+    private final HouseService houseService;
     private final JwtTokenCheck jwtTokenCheck;
 
     @Autowired
-    public UserController(UserService userService, JwtTokenCheck jwtTokenCheck) {
-        this.userService = userService;
+    public HouseController(HouseService houseService, JwtTokenCheck jwtTokenCheck) {
+        this.houseService = houseService;
         this.jwtTokenCheck = jwtTokenCheck;
     }
 
     @GetMapping(params = {"id"})
-    public ResponseEntity getUserById(@RequestParam Long id,
+    public ResponseEntity getHouseById(@RequestParam Long id,
                                       @RequestHeader("token") String token) {
         try {
             try {
@@ -31,25 +32,7 @@ public class UserController {
             } catch (JwtAuthenticationException e) {
                 return ResponseEntity.badRequest().body(e.getMessage());
             }
-            return ResponseEntity.ok(userService.getUserById(id));
-
-        } catch (EntityNotFoundException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().body("An error occurred");
-        }
-    }
-
-    @GetMapping(params = {"name"})
-    public ResponseEntity getUserByName(@RequestParam String name,
-                                        @RequestHeader("token") String token) {
-        try {
-            try {
-                jwtTokenCheck.checkToken(token);
-            } catch (JwtAuthenticationException e) {
-                return ResponseEntity.badRequest().body(e.getMessage());
-            }
-            return ResponseEntity.ok(userService.getUserByName(name));
+            return ResponseEntity.ok(houseService.getHouseById(id));
 
         } catch (EntityNotFoundException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
@@ -59,30 +42,51 @@ public class UserController {
     }
 
     @GetMapping
-    public ResponseEntity getAllUsers(@RequestHeader("token") String token) {
+    public ResponseEntity getAllHouses(@RequestHeader("token") String token) {
         try {
             try {
                 jwtTokenCheck.checkToken(token);
             } catch (JwtAuthenticationException e) {
                 return ResponseEntity.badRequest().body(e.getMessage());
             }
-            return ResponseEntity.ok(userService.getAllUsers());
+            return ResponseEntity.ok(houseService.getAllHouses());
 
         } catch (Exception e) {
             return ResponseEntity.badRequest().body("An error occurred");
         }
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity deleteUser(@PathVariable Long id,
-                                     @RequestHeader("token") String token) {
+
+    @PostMapping
+    public ResponseEntity createHouse(@RequestBody House house,
+                                        @RequestHeader("token") String token) {
+
         try {
             try {
                 jwtTokenCheck.checkToken(token);
             } catch (JwtAuthenticationException e) {
                 return ResponseEntity.badRequest().body(e.getMessage());
             }
-            return ResponseEntity.ok(userService.deleteUserById(id));
+            houseService.createHouse(house);
+            return ResponseEntity.ok().body("House added");
+
+        } catch (EntityAlreadyExistException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body("An error occurred");
+        }
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity deleteHouse(@PathVariable Long id,
+                                        @RequestHeader("token") String token) {
+        try {
+            try {
+                jwtTokenCheck.checkToken(token);
+            } catch (JwtAuthenticationException e) {
+                return ResponseEntity.badRequest().body(e.getMessage());
+            }
+            return ResponseEntity.ok(houseService.deleteHouseById(id));
 
         } catch (EntityNotFoundException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
@@ -92,18 +96,17 @@ public class UserController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity updateUser(@RequestBody User user,
-                                     @PathVariable Long id,
-                                     @RequestHeader("token") String token) {
+    public ResponseEntity updateHouse(@RequestBody House house,
+                                        @PathVariable Long id,
+                                        @RequestHeader("token") String token) {
         try {
             try {
                 jwtTokenCheck.checkToken(token);
             } catch (JwtAuthenticationException e) {
                 return ResponseEntity.badRequest().body(e.getMessage());
             }
-            userService.updateUser(user, id);
-            return ResponseEntity.ok().body("User updated");
-
+            houseService.updateHouse(house, id);
+            return ResponseEntity.ok().body("House updated");
         } catch (EntityNotFoundException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         } catch (Exception e) {

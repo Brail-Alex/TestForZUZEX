@@ -36,6 +36,14 @@
         </createTable>
     </changeSet>
 
+    <changeSet id="1.0.1.1" author="alex.brailovsky">
+    <addForeignKeyConstraint baseTableName="houses"
+                             baseColumnNames="owner_id"
+                             constraintName="houses_owner_id_foreign_key"
+                             referencedTableName="users"
+                             referencedColumnNames="id"/>
+</changeSet>
+
     <changeSet id="1.0.2" author="alex.brailovsky">
         <createTable tableName="residents">
             <column name="user_id" type="bigint">

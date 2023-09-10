@@ -2,7 +2,6 @@ package com.example.security.jwt;
 
 import com.example.exception.JwtAuthenticationException;
 import io.jsonwebtoken.*;
-import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -31,16 +30,15 @@ public class JwtToken {
     }
 
 
-    public String getUsername(String token) {
+    public String getUserData(String token) {
         return Jwts.parser().setSigningKey(secret).parseClaimsJws(token).getBody().getSubject();
     }
 
-    public String resolveToken(HttpServletRequest req) {
-        String bearerToken = req.getHeader("Authorization");
+    public String resolveToken(String bearerToken) {
         if (bearerToken != null && bearerToken.startsWith("Bearer_")) {
             return bearerToken.substring(7, bearerToken.length());
         }
-        return null;
+        return bearerToken;
     }
 
     public boolean validateToken(String token) throws JwtAuthenticationException {

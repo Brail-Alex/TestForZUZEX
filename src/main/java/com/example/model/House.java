@@ -21,11 +21,12 @@ public class House {
     private String address;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinTable(name = "owner_houses", joinColumns = {@JoinColumn(name = "user_id", referencedColumnName = "id")},
-            inverseJoinColumns = {@JoinColumn(name = "house_id", referencedColumnName = "id")})
+    @JoinTable(name = "owner_houses", joinColumns = {@JoinColumn(name = "house_id", referencedColumnName = "id")},
+            inverseJoinColumns = {@JoinColumn(name = "user_id", referencedColumnName = "id")})
     private User ownerId;
 
 
     @ManyToMany(mappedBy = "housesResidence", cascade = CascadeType.ALL)
+    @Column(name = "user_id", table = "residents")
     private List<User> residents;
 }

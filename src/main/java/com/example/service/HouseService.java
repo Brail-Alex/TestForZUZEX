@@ -62,6 +62,23 @@ public class HouseService {
                     return new EntityNotFoundException("House with this id not found.");
                 });
     }
+    public House updateHouse(House house) throws EntityNotFoundException {
+
+        House oldHouse = houseRepo.findById(house.getId()).orElseThrow();
+                    oldHouse.setAddress(house.getAddress());
+                    if (house.getOwnerId() != null) {
+                        oldHouse.setOwnerId(house.getOwnerId());
+                    }
+                    if (house.getResidents() != null) {
+                        oldHouse.setResidents(house.getResidents());
+                    }
+                    return houseRepo.save(oldHouse);
+//                })
+////                .orElseThrow(() -> {
+////                    log.info("IN getHouseById - no house found by id: {}", id);
+////                    return new EntityNotFoundException("House with this id not found.");
+////                });
+    }
 
     public Long deleteHouseById(Long id) {
         House house = getHouseById(id);
@@ -74,27 +91,4 @@ public class HouseService {
         return id;
     }
 
-    /**
-     * BUSINESS LOGIC
-     */
-
-    public String addResidentsAtHouse(User owner, User futureResident, String address){
-        List<House> ownerHouseList = owner.getHouseOwnerList();
-        House theHouse = (House) ownerHouseList.stream().filter(house -> house.getAddress().equals(address));
-
-        if (theHouse == null) {
-            return new EntityNotFoundException("House with this address from the owner not found.").getMessage();
-        }
-
-        List<User> residentList = theHouse.getResidents();
-        List<House> housesResidence = futureResident.getHousesResidence();
-
-        if(housesResidence.stream().filter(theHouse::equals).equals(theHouse)){
-            return new EntityAlreadyExistException("User already residence at this the house").getMessage();
-        }
-        housesResidence.add(theHouse);
-        residentList.add(futureResident);
-        return "Resident added in house at the address " + address ;
-
-    }
 }

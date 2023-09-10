@@ -25,12 +25,12 @@ public class User {
     private String password;
 
     @OneToMany(mappedBy = "ownerId", cascade = CascadeType.ALL)
-    @Column(name = "house_list_owner")
+    @Column(name = "house_id", table = "owner_houses")
     private List<House> houseOwnerList;
 
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "residents", joinColumns = {@JoinColumn(name = "user_id", referencedColumnName = "id")},
-            inverseJoinColumns = {@JoinColumn(name = "house_id", referencedColumnName = "id")})
+            inverseJoinColumns = {@JoinColumn(name = "house_id", referencedColumnName = "id" )})
     private List<House> housesResidence;
 
 }
