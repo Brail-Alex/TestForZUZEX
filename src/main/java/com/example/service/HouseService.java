@@ -2,7 +2,6 @@ package com.example.service;
 
 import com.example.exception.EntityAlreadyExistException;
 import com.example.model.House;
-import com.example.model.User;
 import com.example.repository.HouseRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.extern.slf4j.Slf4j;
@@ -16,13 +15,20 @@ import java.util.List;
 public class HouseService {
 
     private final HouseRepository houseRepo;
+    private final UserService userService;
 
     @Autowired
-    public HouseService(HouseRepository houseRepo) {
+    public HouseService(HouseRepository houseRepo, UserService userService) {
         this.houseRepo = houseRepo;
+        this.userService = userService;
     }
 
     public House createHouse(House house) throws EntityAlreadyExistException {
+
+        if (houseRepo.findByAddress(house.getAddress()) != null) {
+            throw new EntityAlreadyExistException("House with this address already exist!");
+        }
+
         House newHouse = houseRepo.save(house);
         log.info("IN createHouse - hose: {} successfully created", newHouse);
         return newHouse;
@@ -62,22 +68,18 @@ public class HouseService {
                     return new EntityNotFoundException("House with this id not found.");
                 });
     }
+
     public House updateHouse(House house) throws EntityNotFoundException {
 
         House oldHouse = houseRepo.findById(house.getId()).orElseThrow();
-                    oldHouse.setAddress(house.getAddress());
-                    if (house.getOwnerId() != null) {
-                        oldHouse.setOwnerId(house.getOwnerId());
-                    }
-                    if (house.getResidents() != null) {
-                        oldHouse.setResidents(house.getResidents());
-                    }
-                    return houseRepo.save(oldHouse);
-//                })
-////                .orElseThrow(() -> {
-////                    log.info("IN getHouseById - no house found by id: {}", id);
-////                    return new EntityNotFoundException("House with this id not found.");
-////                });
+        oldHouse.setAddress(house.getAddress());
+        if (house.getOwnerId() != null) {
+            oldHouse.setOwnerId(house.getOwnerId());
+        }
+        if (house.getResidents() != null) {
+            oldHouse.setResidents(house.getResidents());
+        }
+        return houseRepo.save(oldHouse);
     }
 
     public Long deleteHouseById(Long id) {
@@ -89,6 +91,10 @@ public class HouseService {
             throw new EntityNotFoundException("House with this id not found.");
         }
         return id;
+    }
+
+    public House houseWithOwnerBuilder(String address, Long ownerId){
+        return new House(address, userService.getUserById(ownerId));
     }
 
 }

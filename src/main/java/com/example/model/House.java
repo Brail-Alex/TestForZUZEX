@@ -13,6 +13,7 @@ import java.util.List;
 @Table(name = "houses")
 @EqualsAndHashCode
 public class House {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
@@ -29,4 +30,13 @@ public class House {
     @ManyToMany(mappedBy = "housesResidence", cascade = CascadeType.ALL)
     @Column(name = "user_id", table = "residents")
     private List<User> residents;
+
+    public House(String address, User ownerId) {
+        this.address = address;
+        this.ownerId = ownerId;
+    }
+
+    public House(String address) {
+        this.address = address;
+    }
 }

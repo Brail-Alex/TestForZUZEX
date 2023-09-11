@@ -5,7 +5,8 @@ import lombok.Data;
 
 @Data
 @AllArgsConstructor
-public class AuthRequestsDto {
-    private String name;
-    private String password;
+public class HouseDto {
+    private String address;
+    private Long ownerId;
+
 }

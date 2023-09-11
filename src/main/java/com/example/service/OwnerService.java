@@ -52,7 +52,6 @@ public class OwnerService {
         houseService.updateHouse(theHouse);
         userService.updateUser(futureResident);
 
-
         return "Resident added in house at the address " + address;
     }
 }

@@ -3,12 +3,11 @@ package com.example.security.jwt;
 import com.example.exception.JwtAuthenticationException;
 import io.jsonwebtoken.*;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Component;
 
 import java.util.Base64;
 import java.util.Date;
 
-@Component
+
 public class JwtToken {
     @Value("${jwt.token.secret}")
     private String secret;
@@ -30,7 +29,7 @@ public class JwtToken {
     }
 
 
-    public String getUserData(String token) {
+    public String getUsername(String token) {
         return Jwts.parser().setSigningKey(secret).parseClaimsJws(token).getBody().getSubject();
     }
 

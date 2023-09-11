@@ -24,10 +24,10 @@ public class OwnerController {
         this.jwtTokenCheck = jwtTokenCheck;
     }
 
-    @PostMapping
+    @PutMapping
     public ResponseEntity addResident(@RequestBody AddResidentDto addResidentDto,
                                       @RequestHeader("token") String token) {
-        String username;
+        String username = "";
 
         try {
             username = jwtTokenCheck.checkToken(token);

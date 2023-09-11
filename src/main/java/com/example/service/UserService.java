@@ -30,7 +30,7 @@ public class UserService {
     public String createUser(User user) throws EntityAlreadyExistException {
         if (getUserByName(user.getName()) == null) {
             User registeredUser = userRepo.save(user);
-            log.info("IN createUser - user: {} successfully registered", registeredUser);
+            log.info("IN createUser - user: {} successfully created", registeredUser);
             return jwtToken.createToken(user.getName());
         } else {
             log.info("IN createUser - user: {} with this name: {} already exist", user, user.getName());
@@ -69,16 +69,16 @@ public class UserService {
 
         return userRepo.findById(id)
                 .map(oldUser -> {
-//                    oldUser.setName(user.getName());
-//                    oldUser.setAge(user.getAge());
-//                    oldUser.setPassword(user.getPassword());
-//
-//                    if (user.getHousesResidence() != null) {
-//                        oldUser.setHousesResidence(user.getHousesResidence());
-//                    }
-//                    if (user.getHouseOwnerList() != null) {
-//                        oldUser.setHouseOwnerList(user.getHouseOwnerList());
-//                    }
+                    oldUser.setName(user.getName());
+                    oldUser.setAge(user.getAge());
+                    oldUser.setPassword(user.getPassword());
+
+                    if (user.getHousesResidence() != null) {
+                        oldUser.setHousesResidence(user.getHousesResidence());
+                    }
+                    if (user.getHouseOwnerList() != null) {
+                        oldUser.setHouseOwnerList(user.getHouseOwnerList());
+                    }
                     return userRepo.save(oldUser);
                 })
                 .orElseThrow(() -> {
@@ -102,11 +102,6 @@ public class UserService {
         }
 
         return userRepo.save(oldUser);
-//                })
-//                .orElseThrow(() -> {
-//                    log.info("IN getUserById - no user found by id: {}", user.getId());
-//                    return new EntityNotFoundException("User with this id not found.");
-//                });
     }
 
     public Long deleteUserById(Long id) {

@@ -33,4 +33,9 @@ public class User {
             inverseJoinColumns = {@JoinColumn(name = "house_id", referencedColumnName = "id" )})
     private List<House> housesResidence;
 
+    public User(String name, byte age, String password) {
+        this.name = name;
+        this.age = age;
+        this.password = password;
+    }
 }
